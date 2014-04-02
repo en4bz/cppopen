@@ -16,8 +16,8 @@ class popen_iterator : public std::iterator<std::output_iterator_tag, std::strin
 public:
     popen_iterator();
     popen_iterator(cppopen*);
-    void operator ++();
-    void operator ++(int);
+    popen_iterator& operator ++();
+    popen_iterator& operator ++(int);
     bool operator ==(const popen_iterator&) const;
     bool operator !=(const popen_iterator&) const;
     std::string operator*();

@@ -1,22 +1,26 @@
 #include "cppopen.hpp"
 
-cppopen::cppopen(const std::string& cmd) {
-    this->fp = popen(cmd.c_str(), "r");
-}
-
-cppopen::cppopen(std::initializer_list<std::string> list) {
+std::string cppopen::build_cmd(const std::initializer_list<std::string>& list){
     std::string cmd;
     for(const std::string& arg : list){
         cmd += arg;
         cmd += " ";
     }
-    this->fp = popen(cmd.c_str(), "r");
+    return cmd;
 }
 
-std::string cppopen::getline(int max_len) {
-    char buffer[max_len];
-    fgets(buffer, max_len, this->fp);
-    return std::string(buffer);
+cppopen::cppopen(const std::string& cmd) : fb(popen(cmd.c_str(), "r"), std::ios::in), in_stream(&fb) {}
+
+cppopen::cppopen(std::initializer_list<std::string> list) : cppopen(build_cmd(list)) {}
+
+bool cppopen::is_good() const {
+    return this->in_stream.good();
+}
+
+std::string cppopen::getline() {
+    std::string temp;
+    std::getline(this->in_stream, temp);
+    return temp;
 }
 
 popen_iterator cppopen::begin(){
@@ -28,5 +32,5 @@ popen_iterator cppopen::end(){
 }
 
 cppopen::~cppopen(){
-    pclose(fp);
+    pclose(this->fb.file());
 }

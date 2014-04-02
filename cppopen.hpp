@@ -5,17 +5,22 @@
 #include <fstream>
 #include <iostream>
 #include <initializer_list>
+#include <ext/stdio_filebuf.h>
 
 #include "popen_iterator.hpp"
 
 class cppopen {
-    FILE* fp;
+private:
+    __gnu_cxx::stdio_filebuf<char> fb;
+    std::istream in_stream;
+    static std::string build_cmd(const std::initializer_list<std::string>&);
 public:
     cppopen(const std::string& cmd);
     cppopen(std::initializer_list<std::string> list);
-    std::string getline(int max_len = 256);
+    std::string getline();
     popen_iterator begin();
     popen_iterator end();
+    bool is_good() const;
     ~cppopen();
 };
 #endif
